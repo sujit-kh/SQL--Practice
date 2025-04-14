@@ -75,10 +75,39 @@ Q.20 Show patient_id, first_name, last_name from patients whos diagnosis is 'Dem
 --> SELECT patient_id,first_name,last_name FROM patients WHERE patient_id IN (SELECT patient_id FROM admissions WHERE diagnosis = 'Dementia');
 --> SELECT patient_id,first_name,last_name FROM patients p WHERE 'Dementia' IN (SELECT diagnosis FROM admissions WHERE admissions.patient_id = p.patient_id);
 
+Q.21 Display every patient's first_name. Order the list by the length of each name and then by alphabetically.
+--> SELECT first_name FROM patients order by len(first_name),first_name asc;
 
+Q.22 Show the total amount of male patients and the total amount of female patients in the patients table. Display the two results in the same row.
+--> SELECT (SELECT count(*) FROM patients WHERE gender='M') AS male_count, 
+            (SELECT count(*) FROM patients WHERE gender='F') AS female_count;
+--> SELECT SUM(Gender = 'M') as male_count, 
+            SUM(Gender = 'F') AS female_count FROM patients;
+--> select 
+  sum(case when gender = 'M' then 1 end) as male_count,
+  sum(case when gender = 'F' then 1 end) as female_count 
+from patients;
 
+Q.23 Show first and last name, allergies from patients which have allergies to either 'Penicillin' or 'Morphine'. Show results ordered ascending by 
+allergies then by first_name then by last_name.
+--> select first_name,last_name, allergies from patients
+where allergies = 'Penicillin' or allergies = 'Morphine'
+order by allergies, first_name, last_name;
+--> SELECT first_name, last_name, allergies FROM patients WHERE allergies IN ('Penicillin', 'Morphine')
+ORDER BY allergies, first_name, last_name;
 
+Q.24 Show patient_id, diagnosis from admissions. Find patients admitted multiple times for the same diagnosis.
+--> select patient_id, diagnosis FROM admissions
+group by patient_id, diagnosis	
+having COUNT(*) > 1;
 
+Q.25 Show the city and the total number of patients in the city. Order from most to least patients and then by city name ascending.
+--> select city, count(patient_id) as num_patients from patients group by city order by count(patient_id) DESC, city;
+
+Q26. Show first name, last name and role of every person that is either patient or doctor. The roles are either "Patient" or "Doctor"
+-->SELECT first_name, last_name, 'Patient' as role FROM patients
+    union all
+select first_name, last_name, 'Doctor' from doctors;
 
 
 
